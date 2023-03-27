@@ -1,5 +1,8 @@
 <script setup>
 import { reactive } from 'vue';
+import Header from './components/Header.vue'
+import Form from './components/Form.vue'
+import Todolist from './components/Todolist.vue'
 
 const estado = reactive({
   filtro: "todas",
@@ -53,40 +56,14 @@ const cadastrarTarefa = () => {
 
 <template>
   <div class="container">
-    <header class="p-5 mb-4 mt-4 bg-light rounded-3">
-      <h1>Minhas tarefas</h1>
-      <p>
-        Você possui {{ pegarTarefasPendentes().length }} tarefas pendentes
-      </p>
-    </header>
-    <form @submit.prevent="cadastrarTarefa">
-      <div class="row">
-        <div class="col">
-          <input :value="estado.tarefa_cadastro" @change="event => estado.tarefa_cadastro = event.target.value" required class="form-control" type="text" placeholder="Descrição da tarefa">
-        </div>
-        <div class="col-md-2">
-          <button class="btn btn-primary" type="submit">Adicionar</button>
-        </div>
-        <div class="col-md-2">
-          <select @change="event => estado.filtro = event.target.value" class="form-control">
-            <option value="todas">Todas</option>
-            <option value="pendentes">Pendentes</option>
-            <option value="finalizadas">Finalizadas</option>
-          </select>
-        </div>
-      </div>
-    </form>
-    <ul class="list-group mt-4">
-      <li class="list-group-item" v-for="tarefa in pegarTarefasFiltradas()">
-        <input @change="event => tarefa.finalizada = event.target.checked" :checked="tarefa.finalizada" :id="tarefa.titulo" type="checkbox">
-        <label :class="{ done: tarefa.finalizada }" class="ms-3" :for="tarefa.titulo">{{ tarefa.titulo }}</label>
-      </li>
-    </ul>
+    <Header :tarefas-pendentes="pegarTarefasPendentes().length"/>
+    <Form
+      :tarefa-cadastro="estado.tarefa_cadastro"
+      :editar-cadastro="event => estado.tarefa_cadastro = event.target.value"
+      :cadastrar-tarefa="cadastrarTarefa"
+      :trocar-filtro="event => estado.filtro = event.target.value"
+    />
+    <Todolist :tarefas-filtradas="pegarTarefasFiltradas()"/>
   </div>
 </template>
 
-<style scoped>
-.done {
-  text-decoration: line-through;
-}
-</style>
